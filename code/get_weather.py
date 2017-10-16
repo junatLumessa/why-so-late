@@ -3,7 +3,10 @@ import os
 import pandas as pd
 from xml.etree import ElementTree
 
-fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + os.environ['FMI_API_KEY'] + '/wfs'
+#for linux
+#fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + os.environ['FMI_API_KEY'] + '/wfs'
+#for windows (maybe)
+#fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + str(os.getenv('FMI_API_KEY')) + '/wfs'
 
 # tm2       temperature
 # ws-10min  wind speed (m/s)
