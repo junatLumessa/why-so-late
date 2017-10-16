@@ -49,7 +49,9 @@ def get_daily_weather_observations(startTime, endTime):
 
     r = requests.get(fmiUrl, params=parameters)
 
-    return result_to_df(r.text)
+    df = result_to_df(r.text)
+    del df['TG_PT12H_min']
+    return df
 
 
 def result_to_df(xml):
@@ -74,4 +76,4 @@ def result_to_df(xml):
 
 if __name__ == "__main__":
     daily = get_daily_weather_observations('2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
-    daily.to_csv('weather.csv')
+    daily.to_csv('weather.csv', index=False)
