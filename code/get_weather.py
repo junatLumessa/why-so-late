@@ -28,7 +28,7 @@ def get_weather_observations(startTime, endTime):
     }
 
     r = requests.get(fmiUrl, params=parameters)
-    return result_to_df(r.text, 13)
+    return result_to_df(r.text)
 
 # rrday             precipitation amount (mm)
 # snow              snow depth (cm)
@@ -44,31 +44,34 @@ def get_daily_weather_observations(startTime, endTime):
         'place': 'Helsinki',
         'starttime': startTime,
         'endtime': endTime,
-        'timestep': 60 * 24
+        'timestep': 1440
     }
 
     r = requests.get(fmiUrl, params=parameters)
 
-    return result_to_df(r.text, 7)
+    return result_to_df(r.text)
 
 
-def result_to_df(xml, nbrOfVariables):
+def result_to_df(xml):
     tree = ElementTree.fromstring(xml)
 
     data = []
-    i = 0
     j = -1
+    prevDate = None
+
     for node in tree.findall('.//{http://xml.fmi.fi/schema/wfs/2.0}BsWfsElement'):
-        if (i % nbrOfVariables == 0):
+        date = node[1].text
+        if (prevDate != date):
             j += 1
-            data.append({'datetime': node[1].text})
+            prevDate = date
+            data.append({'datetime': date})
 
         variable = node[2].text
         value = node[3].text
         data[j][variable] = value
-        i += 1
+
     return pd.DataFrame(data)
 
 if __name__ == "__main__":
-    print(get_weather_observations('2016-09-05T12:00:00Z', '2016-09-05T17:00:00Z'))
-    print(get_daily_weather_observations('2016-09-02T00:00:00Z', '2016-09-05T00:00:00Z'))
+    daily = get_daily_weather_observations('2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
+    daily.to_csv('weather.csv')
