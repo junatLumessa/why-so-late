@@ -4,7 +4,7 @@ import pandas as pd
 from xml.etree import ElementTree
 
 #for linux
-fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + os.environ['FMI_API_KEY'] + '/wfs'
+#fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + os.environ['FMI_API_KEY'] + '/wfs'
 #for windows
 #fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + str(os.getenv('FMI_API_KEY')) + '/wfs'
 
@@ -27,10 +27,11 @@ def get_weather_observations(startTime, endTime):
         'place': 'Helsinki',
         'starttime': startTime,
         'endtime': endTime,
-        'timestep': 60
+        'timestep': 1440
     }
 
     r = requests.get(fmiUrl, params=parameters)
+    print(r.text)
     return result_to_df(r.text)
 
 # rrday             precipitation amount (mm)
@@ -51,7 +52,7 @@ def get_daily_weather_observations(startTime, endTime):
     }
 
     r = requests.get(fmiUrl, params=parameters)
-
+    print(r.text)
     df = result_to_df(r.text)
     del df['TG_PT12H_min']
     return df
