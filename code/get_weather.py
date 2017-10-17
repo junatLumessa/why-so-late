@@ -3,7 +3,10 @@ import os
 import pandas as pd
 from xml.etree import ElementTree
 
+#for linux
 fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + os.environ['FMI_API_KEY'] + '/wfs'
+#for windows
+#fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + str(os.getenv('FMI_API_KEY')) + '/wfs'
 
 # tm2       temperature
 # ws-10min  wind speed (m/s)
@@ -53,6 +56,10 @@ def get_daily_weather_observations(startTime, endTime):
     del df['TG_PT12H_min']
     return df
 
+def delete_minuses(df, type):
+    df[type] = df[type].astype(str).astype(float)
+    df.ix[df[type] == -1, [type]] = 0
+    return df
 
 def result_to_df(xml):
     tree = ElementTree.fromstring(xml)
