@@ -8,19 +8,41 @@ import numpy as np
 
 def plot_hist(type, start, end):
     df = weather.get_daily_weather_observations(start, end)
-    print(df.dtypes)
+    df = weather.delete_minuses(df, type)
 
     init_notebook_mode(connected=False)
-    x = df['rrday']
     data = [go.Bar(
             x=df['datetime'],
             y=df[type]
     )]
     plotly.offline.plot({
         "data": data,
-        "layout": Layout(title="hello world"
+        "layout": Layout(title='Amount of ' + type
     )
     }, image='png', image_filename=type)
 
+def plot_line(type, start, end):
+    df = weather.get_daily_weather_observations(start, end)
+    print(df.dtypes)
+
+    init_notebook_mode(connected=False)
+    y = df[type]
+    x = df['datetime']
+    # Create a trace
+    trace = go.Scatter(
+        x=x,
+        y=y,  line = dict(
+        color = ('green'))
+    )
+    data = [trace]
+    plotly.offline.plot({
+        "data": data,
+        "layout": Layout(title=type
+    )
+    }, image='png', image_filename=type)
+    #py.image.save_as(data, filename='a-simple-plot.png')
+
 if __name__ == "__main__":
     plot_hist('snow', '2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
+
+    #plot_line('snow', '2016-10-17T00:00:00Z', '2017-10-17T00:00:00Z')
