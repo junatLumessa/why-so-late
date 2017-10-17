@@ -9,6 +9,7 @@ import numpy as np
 def plot_hist(type, start, end):
     df = weather.get_daily_weather_observations(start, end)
     df = weather.delete_minuses(df, type)
+    print(df.dtypes)
 
     init_notebook_mode(connected=False)
     data = [go.Bar(
@@ -43,6 +44,6 @@ def plot_line(type, start, end):
     #py.image.save_as(data, filename='a-simple-plot.png')
 
 if __name__ == "__main__":
-    plot_hist('snow', '2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
+    plot_hist('rrday', '2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
 
     #plot_line('snow', '2016-10-17T00:00:00Z', '2017-10-17T00:00:00Z')

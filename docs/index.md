@@ -1,19 +1,31 @@
-## Hello world!
+## Application for predicting train lateness
 
 # Table of Contents
-1. [Example](#example)
-2. [Example2](#example2)
-3. [Third Example](#third-example)
+1. [Data overview](#data-overview)
+    1. [Weather data](#weather-data)
+    1. [Railway data](#railway-data)
+1. [Predictions](#predictions)
+1. [Conclusions](#conclusions)
 
-## Example
-## Example2
-## Third Example
+## Data overview
 
-![alt text](snow.png "Image trial")
+In this section we will give a bief overlook on the data to be analyzed. All the data has been collected from the past year (October 2016 - October 2017).
 
-<dl>
-  <dt>Trying out HTML</dt>
-  <dd>Does this work?</dd>
+### Weather data
 
-</dl>
+![Pic 1: Amount of snowfall in the past year.](snow.png "Snow amount")
 
+
+![Pic 2: Amount of rainfall in the past year.](rrday.png "Rain amount")
+
+### Railway data
+
+*ToDo*
+
+## Predictions
+
+*ToDo*
+
+## Conclusions
+
+*ToDo*
