@@ -22,7 +22,7 @@ def get_history(d1, d2, lineId=None):
 
     return data
 
-def process_time_table_rows(df):
+def process_time_table_rows(df, idx):
     cols = ['stationUICCode', 'cancelled', 'causes', 'differenceInMinutes', 'scheduledTime', 'actualTime', 'commercialTrack']
     data = []
 
@@ -30,7 +30,7 @@ def process_time_table_rows(df):
         jsonString = row['timeTableRows'].replace("'", '"').replace('True', 'true').replace('False', 'false')
         for timeTableRow in json.loads(jsonString):
             if timeTableRow['trainStopping']:
-                val = {'idx': index}
+                val = {'idx': index + idx}
                 for col in cols:
                     if col in timeTableRow:
                         val[col] = timeTableRow[col]
@@ -40,7 +40,7 @@ def process_time_table_rows(df):
 
 def process_causes(df):
     causes = df[df.causes != "[]"]
-    df.causes.replace(['[]'], [None], inplace=True)
+    df.causes.replace(['[]'], [''], inplace=True)
 
     for index, row in causes.iterrows():
         if(row.causes):
@@ -60,15 +60,30 @@ def get_data_in_three_parts(d1, d2, lineId=None):
 
 def combine_three_parts():
     df = pd.read_csv('temp1.csv', index_col=0)
-    df = df.append(pd.read_csv('temp2.csv', index_col=0), ignore_index=True)
-    df = df.append(pd.read_csv('temp3.csv', index_col=0), ignore_index=True)
-    timeTableRows = process_time_table_rows(df)
-    process_causes(timeTableRows)
-    timeTableRows.to_csv('../data/all-train-timetablerows.csv', index=False)
+    timeTableRows = process_time_table_rows(df, 0)
     del df['timeTableRows']
+    print(1)
+
+    idx = timeTableRows.iloc[-1,:]['idx'] + 1
+    df2  = pd.read_csv('temp2.csv', index_col=0, encoding = "ISO-8859-1")
+    timeTableRows = timeTableRows.append(process_time_table_rows(df2, idx), ignore_index=True)
+    del df2['timeTableRows']
+    print(2)
+
+    idx = timeTableRows.iloc[-1,:]['idx'] + 1
+    df3 = pd.read_csv('temp3.csv', index_col=0)
+    timeTableRows = timeTableRows.append(process_time_table_rows(df3, idx), ignore_index=True)
+    del df3['timeTableRows']
+    print(3)
+
+    timeTableRows.to_csv('../data/all-train-timetablerows.csv', index=False)
+    print(4)
+    df = df.append(df2, ignore_index=True)
+    df = df.append(df3, ignore_index=True)
     df.to_csv('../data/all-train.csv')
 
-def process_causes(df):
+def process_causes():
+    df = pd.read_csv('../data/all-train-timetablerows.csv')
     causes = df[df.causes != "[]"]
     df.causes.replace(['[]'], [None], inplace=True)
 
@@ -76,8 +91,10 @@ def process_causes(df):
         if(row.causes):
             causesJsonString = json.loads(row.causes.replace("'", '"'))
             df.set_value(index,"causes",causesJsonString[0]['categoryCode'])
-    #print(df[df.causes.notnull()])
+            
+    df.to_csv('../data/all-train-timetablerows.csv', index=False)
 
 if __name__ == "__main__":
     #get_data_in_three_parts(date(2016, 10, 15), date(2017, 10, 15))
-    combine_three_parts()
+    #combine_three_parts()
+    process_causes()
