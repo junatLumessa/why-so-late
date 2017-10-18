@@ -99,3 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+code/temp*.csv
+code/temp-plot.html
+data/

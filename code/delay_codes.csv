@@ -1,15 +1,15 @@
-syykoodi,selite,
-H, Henkilökunta
+causes,definition
+H, HenkilÃ¶kunta
 J, Junanmuodostus
-K, Kalusto, moottorijunat ja vaunut
+K, Kalusto moottorijunat ja vaunut
 V, Vetokalusto
-A, Aikataulu ja liikennöinti
+A, Aikataulu ja liikennÃ¶inti
 E, Etuajassakulku
 L, Liikenteenhoito
-P, Liikenteenhoitojärjestelmät
-S, Sähkörata
+P, LiikenteenhoitojÃ¤rjestelmÃ¤t
+S, SÃ¤hkÃ¶rata
 T, Rata (ratarakenne)
-R, Ratatyö
+R, RatatyÃ¶
 O, Onnettomuus
 M, Matkustajapalvelu
 I, Muut syyt

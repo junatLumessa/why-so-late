@@ -23,7 +23,7 @@ def get_history(d1, d2, lineId=None):
     return data
 
 def process_time_table_rows(df, idx):
-    cols = ['stationUICCode', 'cancelled', 'causes', 'differenceInMinutes', 'scheduledTime', 'actualTime', 'commercialTrack']
+    cols = ['stationUICCode', 'cancelled', 'causes', 'differenceInMinutes', 'scheduledTime', 'actualTime', 'commercialTrack', 'type']
     data = []
 
     for index, row in df.iterrows():
@@ -91,7 +91,7 @@ def process_causes():
         if(row.causes):
             causesJsonString = json.loads(row.causes.replace("'", '"'))
             df.set_value(index,"causes",causesJsonString[0]['categoryCode'])
-            
+
     df.to_csv('../data/all-train-timetablerows.csv', index=False)
 
 if __name__ == "__main__":
