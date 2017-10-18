@@ -55,6 +55,15 @@ def get_data_in_three_parts(d1, d2, lineId):
     del data['timeTableRows']
     data.to_csv('../data/{}-train.csv'.format(lineId))
 
+def process_causes(df):
+    causes = df[df.causes != "[]"]
+    df.causes.replace(['[]'], [None], inplace=True)
+
+    for index, row in causes.iterrows():
+        if(row.causes):
+            causesJsonString = json.loads(row.causes.replace("'", '"'))
+            df.set_value(index,"causes",causesJsonString[0]['categoryCode'])
+    #print(df[df.causes.notnull()])
 
 if __name__ == "__main__":
     #get_data_in_three_parts(date(2016, 10, 15), date(2017, 10, 15), 'A')
