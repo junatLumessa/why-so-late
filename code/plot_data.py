@@ -74,6 +74,20 @@ def plot_a_train_late():
         "layout": layout
     }, image='png', image_filename="lateThreeMinutes")
 
+def plot_delay_causes():
+    #run get_data/process_causes() before running this
+    df = pd.read_csv('../data/a-train-timetablerows.csv')
+    codes = pd.read_csv('delay_codes.csv')
+    delays = df[df.causes.notnull()]
+    delays = delays[['causes','actualTime','differenceInMinutes','stationUICCode']]
+
+    counts = delays.causes.value_counts().reset_index()
+    counts.columns = ['causes', 'count']
+    counts = counts.merge(codes, on="causes")
+
+    delayInMinutesMean = delays.groupby(['causes'])['differenceInMinutes'].mean().reset_index()
+    counts = counts.merge(delayInMinutesMean, on="causes")
+    print(counts)
 
 if __name__ == "__main__":
     # plot_a_train()
