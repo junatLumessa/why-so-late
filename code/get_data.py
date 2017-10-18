@@ -20,7 +20,7 @@ def get_history(d1, d2, lineId):
     return data
 
 def process_time_table_rows(df):
-    cols = ['stationUICCode', 'cancelled', 'causes', 'differenceInMinutes', 'scheduledTime', 'actualTime', 'commercialTrack']
+    cols = ['stationUICCode', 'cancelled', 'causes', 'differenceInMinutes', 'scheduledTime', 'actualTime', 'commercialTrack', 'type']
     data = []
 
     for index, row in df.iterrows():
@@ -57,5 +57,5 @@ def get_data_in_three_parts(d1, d2, lineId):
 
 
 if __name__ == "__main__":
-    #get_data_in_three_parts(date(2016, 10, 15), date(2017, 10, 15), 'A')
-    get_data_in_three_parts(date(2017, 10, 14), date(2017, 10, 16), 'R')
+    get_data_in_three_parts(date(2016, 10, 15), date(2017, 10, 15), 'A')
+    #get_data_in_three_parts(date(2017, 10, 14), date(2017, 10, 16), 'R')
