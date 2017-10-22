@@ -86,7 +86,68 @@ def plot_a_train_and_weather(column):
         "data": data
     }, image='png', image_filename="bar-plot")
 
+# todo
+"""
+def plot_time_and_late():
+    data = pd.read_csv('../data/all-train-timetablerows.csv')
+
+    data = data[data['type'] == 'DEPARTURE']
+    data['late'] = (data['differenceInMinutes'] >= 3).astype('int')
+    data['time'] = data['scheduledTime'].str.slice(11, 13)
+
+    late = data[data['late'] == 1]
+
+    init_notebook_mode(connected=False)
+    hist = [
+    go.Histogram(
+        x=data['time']
+    ),
+    go.Histogram(
+        x=late['time'],
+        y=late['late'],
+        marker=dict(
+            color='#f46542',
+        )
+    )
+    ]
+
+    plot({
+        "data": hist,
+        "layout": Layout(title="Time, late")
+    }, image='png', image_filename="timeLate")
+"""
+
+def plot_average_delays_by_lineid():
+    df = pd.read_csv('../data/all-train-timetablerows.csv')
+    trainInfo = pd.read_csv('../data/all-train.csv')
+    trainInfo = trainInfo.rename(columns = {'Unnamed: 0': 'idx'})
+    trainInfo = trainInfo[['idx', 'commuterLineID']]
+
+    df = df.merge(trainInfo, on="idx")
+
+    result = df.groupby(['commuterLineID'])['differenceInMinutes'].mean().reset_index()
+    #result2 = df.groupby(['commuterLineID']).count().reset_index()
+
+    init_notebook_mode(connected=False)
+    hist = [
+    go.Bar(
+        x=result['commuterLineID'],
+        y=result['differenceInMinutes'],
+        marker=dict(
+            color='green',
+        )
+    )
+    ]
+
+    plot({
+        "data": hist,
+        "layout": Layout(title="Average delays of commuter trains")
+    }, image='png', image_filename="averageDelays")
+
+
 if __name__ == "__main__":
     # plot_a_train()
     # plot_a_train_late()
-    plot_a_train_and_weather('tday')
+    # plot_a_train_and_weather('tday')
+    #plot_time_and_late()
+    plot_average_delays_by_lineid()

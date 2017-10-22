@@ -47,6 +47,9 @@ or if HTML not visible, here:
 | Junanmuodostus                   | 149   | 14.0                  |
 | Vetokalusto                      | 45    | 11.2                  |
 
+![Pic 5:  Average delays of commuter trains](averageDelays.png "Average delays of commuter trains")
+
+
 ## Predictions
 
 *ToDo*
