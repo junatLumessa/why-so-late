@@ -1,6 +1,6 @@
-## Application for predicting train lateness
+# Application for predicting train delays
 
-# Table of Contents
+## Table of Contents
 1. [Data overview](#data-overview)
     1. [Weather data](#weather-data)
     1. [Railway data](#railway-data)

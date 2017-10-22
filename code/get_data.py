@@ -109,8 +109,59 @@ def process_causes(df=None):
     if df is None:
         df.to_csv('../data/all-train-timetablerows.csv', index=False)
 
+# This is for counting percentages of departures that are late
+def process_departure_percentages(trainno):
+    line = '../data/data/-train-timetablerows.csv'
+    index = line.find('-')
+    filepath = line[:index] + trainno + line[index:]
+    print(filepath)
+
+    data = pd.read_csv(filepath)
+    data = data[data['type'] == 'DEPARTURE']
+    temp = []
+    percents = []
+    dates = []
+    current = data.iloc[0]['scheduledTime'][:10]
+
+    j = 0
+    # sum = 0
+    for index, row in data.iterrows():
+
+        date = row['scheduledTime'][:10]
+
+        if (date > current):
+            all_len = len(temp)
+            late = [1 for i in temp if i >= 3]
+            late_len = len(late)
+            percents.append((late_len / all_len) * 100)
+            dates.append(current)
+            current = row['scheduledTime'][:10]
+
+            # print(temp)
+            # print(j)
+            temp = []
+            j = 0
+
+
+        else:
+            temp.append(row['differenceInMinutes'])
+            j += 1
+
+    mean_data = pd.DataFrame({'date': dates, 'percents': percents})
+    print(mean_data.head(n=5))
+
+    to_line = '-train-percents.csv'
+    index = to_line.find('-')
+    csvpath = to_line[:index] + trainno + to_line[index:]
+
+    mean_data.to_csv(csvpath, index=False)
+
+    return mean_data
+
+
 if __name__ == "__main__":
     #get_data_in_three_parts(date(2016, 10, 15), date(2017, 10, 15))
     #combine_three_parts()
     #process_causes()
+    process_departure_percentages('a')
     get_data_for_current_day()
