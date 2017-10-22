@@ -19,6 +19,8 @@ In this section we will give a bief overlook on the data to be analyzed. All the
 ![Pic 2: Amount of rainfall in the past year.](rrday.png "Rain amount")
 ![Pic 3: Gust speed in the last week.](wg_10min.png "Gust speed")
 
+![Page 1: Air temperature and lateness percentage during last year](weather-late.html)
+
 ### Railway data
 
 *ToDo*
