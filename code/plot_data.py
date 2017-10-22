@@ -62,17 +62,19 @@ def plot_delay_causes():
     counts = counts.merge(delayInMinutesMean, on="causes")
     print(counts)
 
-def plot_a_train_and_temp():
+def plot_a_train_and_weather(column):
+    #A - train data: percentages of trains late that day
     td = pd.read_csv('a-train-percents.csv')
-    print(td.head(n=5))
 
+    #Weather data
     wd = pd.read_csv('weather.csv')
-    print(wd.head(n=5))
+    if column is not 'tday':
+        wd = weather.delete_minuses(wd, column)
 
     init_notebook_mode(connected=False)
     trace1 = go.Scatter(
         x=wd['datetime'],
-        y=wd['tday']
+        y=wd[column]
     )
     trace2 = go.Bar(
         x=td['date'],
@@ -87,4 +89,4 @@ def plot_a_train_and_temp():
 if __name__ == "__main__":
     # plot_a_train()
     # plot_a_train_late()
-    plot_a_train_and_temp()
+    plot_a_train_and_weather('tday')
