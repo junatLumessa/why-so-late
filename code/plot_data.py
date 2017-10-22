@@ -4,6 +4,7 @@ import plotly.graph_objs as go
 import plotly.offline as offline
 from plotly.graph_objs import Layout
 import analyze as az
+import get_weather as weather
 
 
 def plot_a_train():
@@ -46,34 +47,6 @@ def plot_a_train_late():
         "layout": Layout(title="Difference in minutes for A-train, more than 3 minutes late")
     }, image='png', image_filename="differenceInMinutesThree")
 
-
-def plot_a_train_late():
-    df = az.get_departures()
-    print(df.head(n=5))
-    init_notebook_mode(connected=True)
-    trace1 = [go.Bar(
-        x=df['date'],
-        y=df['percents'],
-        text=df['percents'],
-        textposition='auto',
-        marker=dict(
-            color='#f46542',
-
-        )
-    )]
-    data = trace1
-    layout = go.Layout(
-
-        yaxis=dict(
-            range=[0, 20.5]
-        ), title="Late departures of A-train, more than 3 minutes late"
-    )
-
-    offline.plot({
-        "data": data,
-        "layout": layout
-    }, image='png', image_filename="lateThreeMinutes")
-
 def plot_delay_causes():
     #run get_data/process_causes() before running this
     df = pd.read_csv('../data/a-train-timetablerows.csv')
@@ -89,7 +62,29 @@ def plot_delay_causes():
     counts = counts.merge(delayInMinutesMean, on="causes")
     print(counts)
 
+def plot_a_train_and_temp():
+    td = pd.read_csv('a-train-percents.csv')
+    print(td.head(n=5))
+
+    wd = pd.read_csv('weather.csv')
+    print(wd.head(n=5))
+
+    init_notebook_mode(connected=False)
+    trace1 = go.Scatter(
+        x=wd['datetime'],
+        y=wd['tday']
+    )
+    trace2 = go.Bar(
+        x=td['date'],
+        y=td['percents']
+    )
+
+    data = [trace1, trace2]
+    offline.plot({
+        "data": data
+    }, image='png', image_filename="bar-plot")
+
 if __name__ == "__main__":
     # plot_a_train()
     # plot_a_train_late()
-    plot_a_train_late()
+    plot_a_train_and_temp()

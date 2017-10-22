@@ -6,7 +6,7 @@ from datetime import date, timedelta
 
 
 def get_departures():
-    data = pd.read_csv('../data/a-train-timetablerows.csv')
+    data = pd.read_csv('../data/data/a-train-timetablerows.csv')
     data = data[data['type'] == 'DEPARTURE']
     temp = []
     percents = []
@@ -42,7 +42,12 @@ def get_departures():
     mean_data = pd.DataFrame({'date': dates, 'percents': percents})
     print(mean_data.head(n=5))
 
+    mean_data.to_csv('a-train-percents.csv', index=False)
+
     return mean_data
+
+def some_regression_thing():
+    return 0
 
 
 
