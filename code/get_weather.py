@@ -2,11 +2,24 @@ import requests
 import os
 import pandas as pd
 from xml.etree import ElementTree
+from datetime import datetime
+import pytz
 
-#for linux
-#fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + os.environ['FMI_API_KEY'] + '/wfs'
-#for windows
-#fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + str(os.getenv('FMI_API_KEY')) + '/wfs'
+fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + str(os.getenv('FMI_API_KEY')) + '/wfs'
+
+def get_weather_forecast_for_current_day():
+    today = datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%Y-%m-%d')
+    parameters = {
+        'request': 'getFeature',
+        'storedquery_id': 'fmi::forecast::hirlam::surface::obsstations::simple',
+        'place': 'Helsinki',
+        'starttime': today + 'T00:00:00Z',
+        'endtime': today + 'T23:00:00Z',
+        'timestep': 60
+    }
+
+    r = requests.get(fmiUrl, params=parameters)
+    return result_to_df(r.text)
 
 # tm2       temperature
 # ws-10min  wind speed (m/s)
@@ -83,5 +96,8 @@ def result_to_df(xml):
     return pd.DataFrame(data)
 
 if __name__ == "__main__":
-    daily = get_daily_weather_observations('2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
-    daily.to_csv('weather.csv', index=False)
+    #daily = get_daily_weather_observations('2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
+    #daily.to_csv('weather.csv', index=False)
+
+    #today = get_weather_forecast_for_current_day()
+    #today.to_csv('weather_today.csv', index=False)

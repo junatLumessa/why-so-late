@@ -1,34 +1,52 @@
 import json
 import requests
 import pandas as pd
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+import pytz
+
+digitrafficUrl = "https://rata.digitraffic.fi/api/v1/"
+
+def get_data_for_current_day():
+    today = datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%Y-%m-%d')
+    url = digitrafficUrl + "trains/" + str(today)
+    df = get_df_from_url(url)
+    timeTableRows = process_time_table_rows(df, 0, False)
+    process_causes(timeTableRows)
+    del df["timeTableRows"]
+    df.to_csv("../data/today.csv")
+    timeTableRows.to_csv("../data/today-timetablerows.csv", index=False)
 
 def get_history(d1, d2, lineId=None):
-
     delta = d2 - d1         # timedelta
     data = pd.DataFrame()
 
     for i in range(delta.days + 1):
         departure_date = d1 + timedelta(days=i)
         print(departure_date)
-        url = "https://rata.digitraffic.fi/api/v1/history?departure_date="+str(departure_date)
-        df = pd.read_json(url)
-        if lineId is not None:
-            df = df[(df['trainCategory'] == 'Commuter') & (df['commuterLineID'] == lineId) & (df['cancelled'] == False)]
-        else:
-            df = df[(df['trainCategory'] == 'Commuter') & (df['cancelled'] == False)]
-        df = df.drop(['operatorShortCode','timetableAcceptanceDate','timetableType','version','operatorUICCode','trainCategory'],axis=1)
+        url = digitrafficUrl + "history?departure_date=" + str(departure_date)
+        df = get_df_from_url(url, lineId)
         data = data.append(df, ignore_index=True)
 
     return data
 
-def process_time_table_rows(df, idx):
+def get_df_from_url(url, lineId=None):
+    df = pd.read_json(url)
+    if lineId is not None:
+        df = df[(df['trainCategory'] == 'Commuter') & (df['commuterLineID'] == lineId) & (df['cancelled'] == False)]
+    else:
+        df = df[(df['trainCategory'] == 'Commuter') & (df['cancelled'] == False)]
+    df = df.drop(['operatorShortCode','timetableAcceptanceDate','timetableType','version','operatorUICCode','trainCategory'],axis=1)
+    return df
+
+def process_time_table_rows(df, idx, isInJSON=True):
     cols = ['stationUICCode', 'cancelled', 'causes', 'differenceInMinutes', 'scheduledTime', 'actualTime', 'commercialTrack', 'type']
     data = []
 
     for index, row in df.iterrows():
-        jsonString = row['timeTableRows'].replace("'", '"').replace('True', 'true').replace('False', 'false')
-        for timeTableRow in json.loads(jsonString):
+        if isInJSON:
+            jsonString = row['timeTableRows'].replace("'", '"').replace('True', 'true').replace('False', 'false')
+            row['timeTableRows'] = json.load(jsonString)
+        for timeTableRow in row['timeTableRows']:
             if timeTableRow['trainStopping']:
                 val = {'idx': index + idx}
                 for col in cols:
@@ -37,15 +55,6 @@ def process_time_table_rows(df, idx):
                 data.append(val)
 
     return pd.DataFrame.from_dict(data)
-
-def process_causes(df):
-    causes = df[df.causes != "[]"]
-    df.causes.replace(['[]'], [''], inplace=True)
-
-    for index, row in causes.iterrows():
-        if(row.causes):
-            causesJsonString = json.loads(row.causes.replace("'", '"'))
-            df.set_value(index,"causes",causesJsonString[0]['categoryCode'])
 
 # date range have to be divisible by three
 def get_data_in_three_parts(d1, d2, lineId=None):
@@ -82,17 +91,23 @@ def combine_three_parts():
     df = df.append(df3, ignore_index=True)
     df.to_csv('../data/all-train.csv')
 
-def process_causes():
-    df = pd.read_csv('../data/all-train-timetablerows.csv')
-    causes = df[df.causes != "[]"]
-    df.causes.replace(['[]'], [None], inplace=True)
+def process_causes(df=None):
+    if df is None:
+        df = pd.read_csv('../data/all-train-timetablerows.csv')
+        causes = df[df.causes != "[]"]
+        df.causes.replace(['[]'], [None], inplace=True)
+    else:
+        causes = df[[len(y) == 0 for y in df.causes]]
+        df.causes = df.causes.apply(lambda y: None if len(y) == 0 else y)
 
     for index, row in causes.iterrows():
         if(row.causes):
-            causesJsonString = json.loads(row.causes.replace("'", '"'))
-            df.set_value(index,"causes",causesJsonString[0]['categoryCode'])
+            if df is None:
+                row.causes = json.loads(row.causes.replace("'", '"'))
+            df.set_value(index, "causes", row.causes[0]['categoryCode'])
 
-    df.to_csv('../data/all-train-timetablerows.csv', index=False)
+    if df is None:
+        df.to_csv('../data/all-train-timetablerows.csv', index=False)
 
 # This is for counting percentages of departures that are late
 def process_departure_percentages(trainno):
@@ -149,3 +164,4 @@ if __name__ == "__main__":
     #combine_three_parts()
     #process_causes()
     process_departure_percentages('a')
+    get_data_for_current_day()
