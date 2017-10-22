@@ -55,11 +55,12 @@ def date_shaper(df):
     return df
 
 
-def some_regression_thing():
-    training_data, test_data, train_target, test_target = divide_data()
+def some_regression_thing(column):
+    training_data, test_data, train_target, test_target = divide_data(column)
 
     dummy = linear_model.LinearRegression()
     dummy.fit(training_data, train_target)
+    dummy.predict(test_data)
 
     pr = dummy.score(test_data, test_target)
     print('Linear regression score: ')
@@ -74,7 +75,7 @@ def make_binarys(df, threshold, name, bool):
     else:
         df[new_name] = df[name] > threshold
 
-def divide_data():
+def divide_data(column):
     # A - train data: percentages of trains late that day
     td = pd.read_csv('a-train-percents.csv')
 
@@ -83,7 +84,10 @@ def divide_data():
     date_shaper(wd)
 
     make_binarys(td, 5, 'percents', False)
-    make_binarys(wd, 0, 'tday', True)
+    if(column is 'tday'):
+        make_binarys(wd, 0, column, True)
+    else:
+        make_binarys(wd, 0, column, False)
 
     df = pd.merge(td, wd, how='inner', sort=True,
                   suffixes=('_t', '_w'), copy=True, indicator=False)
@@ -91,26 +95,37 @@ def divide_data():
     df = df.sample(frac=1)
 
     perc = df['percents_binary']
-    temp = df['tday_binary']
+    column_name = column + '_binary'
+    explain = df[column_name]
 
-    training_data, test_data, train_target, test_target = train_test_split(temp, perc, train_size=0.8)
-    print('training_data size = ', len(training_data))
+    training_data, test_data, train_target, test_target = train_test_split(explain, perc, train_size=0.8)
+    #print('training_data size = ', len(training_data))
     # print('test_data size = ', range(len(test_data[0])))
-    train_target = train_target.reshape(-1, 1)
-    training_data = training_data.reshape(-1, 1)
-    test_target = test_target.reshape(-1, 1)
-    test_data = test_data.reshape(-1, 1)
+
+    train_target = train_target.values.reshape(-1, 1)
+    training_data = training_data.values.reshape(-1, 1)
+    test_target = test_target.values.reshape(-1, 1)
+    test_data = test_data.values.reshape(-1, 1)
 
     return training_data, test_data, train_target, test_target
 
 
-def logistic_regression():
-    training_data, test_data, train_target, test_target = divide_data()
+#Make data binary first, then predict it
+def logistic_regression(column):
+    training_data, test_data, train_target, test_target = divide_data(column)
     logistic = LogisticRegression()
 
     logistic.fit(training_data, train_target)
+    predicted_log = logistic.predict(test_data)
     print(' Logistic regression score:')
     print(logistic.score(test_data, test_target))
+
+    for i in range(0, len(test_target)):
+        if (test_target[i] != predicted_log[i]):
+            print('Predicted value %d ' % predicted_log[i])
+            print('Expected value %d ' % test_target[i])
+
+
 
 def dummy_classifier():
     # not working yet :( sniff..
@@ -124,5 +139,7 @@ def dummy_classifier():
 
 
 if __name__ == "__main__":
-    logistic_regression()
+    logistic_regression('rrday')
+    #some_regression_thing('snow')
+
     #dummy_classifier()
