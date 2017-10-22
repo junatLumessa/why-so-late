@@ -63,11 +63,11 @@ def plot_delay_causes():
     print(counts)
 
 def plot_a_train_and_temp():
+    #A - train data: percentages of trains late that day
     td = pd.read_csv('a-train-percents.csv')
-    print(td.head(n=5))
 
+    #Weather data
     wd = pd.read_csv('weather.csv')
-    print(wd.head(n=5))
 
     init_notebook_mode(connected=False)
     trace1 = go.Scatter(
