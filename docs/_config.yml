@@ -1,1 +1,4 @@
 theme: jekyll-theme-minimal
+
+title: [Why so late VR]
+description: [Trains are sometimes late due to unexpected weather conditions. Our aim is to help predict when trains are likely to be late. We use open weather and railway data provided by FIM and VR.]
