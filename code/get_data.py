@@ -117,7 +117,7 @@ def process_departure_percentages(trainno):
     csvpath = to_line[:index] + trainno + to_line[index:]
 
     if (os.path.isfile(csvpath)):
-        return pd.read_csv(filepath)
+        return pd.read_csv(csvpath)
 
     data = pd.read_csv('../data/all-train-timetablerows.csv')
     trainInfo = pd.read_csv('../data/all-train.csv')
