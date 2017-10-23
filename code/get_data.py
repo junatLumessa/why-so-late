@@ -2,6 +2,7 @@ import json
 import requests
 import pandas as pd
 from datetime import date, datetime, timedelta
+import os.path
 import pytz
 
 digitrafficUrl = "https://rata.digitraffic.fi/api/v1/"
@@ -111,13 +112,23 @@ def process_causes(df=None):
 
 # This is for counting percentages of departures that are late
 def process_departure_percentages(trainno):
-    line = '../data/-train-timetablerows.csv'
-    index = line.find('-')
-    filepath = line[:index] + trainno + line[index:]
-    print(filepath)
+    to_line = '../data/-train-percents.csv'
+    index = to_line.find('-')
+    csvpath = to_line[:index] + trainno + to_line[index:]
 
-    data = pd.read_csv(filepath)
-    data = data[data['type'] == 'DEPARTURE']
+    if (os.path.isfile(csvpath)):
+        return pd.read_csv(filepath)
+
+    data = pd.read_csv('../data/all-train-timetablerows.csv')
+    trainInfo = pd.read_csv('../data/all-train.csv')
+    trainInfo = trainInfo.rename(columns = {'Unnamed: 0': 'idx'})
+    trainInfo = trainInfo[['idx', 'commuterLineID']]
+    data = data.merge(trainInfo, on="idx")
+    if (trainno != 'all'):
+        data = data[(data['type'] == 'DEPARTURE') & (data['commuterLineID'] == trainno)]
+    else:
+        data = data[(data['type'] == 'DEPARTURE') & (data['commuterLineID'] == trainno)]
+
     temp = []
     percents = []
     dates = []
@@ -148,12 +159,11 @@ def process_departure_percentages(trainno):
             j += 1
 
     mean_data = pd.DataFrame({'date': dates, 'percents': percents})
-    print(mean_data.head(n=5))
+    #print(mean_data.head(n=5))
 
-    to_line = '-train-percents.csv'
+    to_line = '../data/-train-percents.csv'
     index = to_line.find('-')
     csvpath = to_line[:index] + trainno + to_line[index:]
-
     mean_data.to_csv(csvpath, index=False)
 
     return mean_data
