@@ -36,7 +36,7 @@ def make_more_binarys(df, column):
 # lineId: train line id
 # column: weather data column used for classification, if none, all of the columns rrday, snow and tday will be used
 # binaryColumns: columns which are converted to binary values
-# multipleBinaryColumns: columns which are converted to multiple binary columns 
+# multipleBinaryColumns: columns which are converted to multiple binary columns
 def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
     if column:
         wdColumns = [column, 'datetime']
@@ -61,7 +61,7 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
             make_more_binarys(wd, column)
 
     td = td.merge(wd, on="date")
-    perc = (td['percents'] >= 5).astype('int')
+    perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
 
     # suffles and splits data
