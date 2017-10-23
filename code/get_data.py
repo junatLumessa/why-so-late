@@ -14,8 +14,9 @@ def get_data_for_current_day():
     timeTableRows = process_time_table_rows(df, 0, False)
     process_causes(timeTableRows)
     del df["timeTableRows"]
-    df.to_csv("../data/today.csv")
-    timeTableRows.to_csv("../data/today-timetablerows.csv", index=False)
+    #df.to_csv("../data/today.csv")
+    #timeTableRows.to_csv("../data/today-timetablerows.csv", index=False)
+    return (df, timeTableRows)
 
 def get_history(d1, d2, lineId=None):
     delta = d2 - d1         # timedelta
