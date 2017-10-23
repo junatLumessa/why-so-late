@@ -97,7 +97,7 @@ def result_to_df(xml):
 
 if __name__ == "__main__":
     #daily = get_daily_weather_observations('2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
-    #daily.to_csv('weather.csv', index=False)
+    #daily.to_csv('../data/weather.csv', index=False)
 
-    #today = get_weather_forecast_for_current_day()
-    #today.to_csv('weather_today.csv', index=False)
+    today = get_weather_forecast_for_current_day()
+    today.to_csv('../data/weather_today.csv', index=False)

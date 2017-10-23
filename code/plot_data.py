@@ -50,7 +50,7 @@ def plot_a_train_late():
 def plot_delay_causes():
     #run get_data/process_causes() before running this
     df = pd.read_csv('../data/a-train-timetablerows.csv')
-    codes = pd.read_csv('delay_codes.csv')
+    codes = pd.read_csv('../data/delay_codes.csv')
     delays = df[df.causes.notnull()]
     delays = delays[['causes','actualTime','differenceInMinutes','stationUICCode']]
 
@@ -64,10 +64,10 @@ def plot_delay_causes():
 
 def plot_a_train_and_weather(column):
     #A - train data: percentages of trains late that day
-    td = pd.read_csv('a-train-percents.csv')
+    td = pd.read_csv('../data/a-train-percents.csv')
 
     #Weather data
-    wd = pd.read_csv('weather.csv')
+    wd = pd.read_csv('../data/weather.csv')
     if column is not 'tday':
         wd = weather.delete_minuses(wd, column)
 

@@ -49,10 +49,10 @@ def make_more_binarys(df, threshold, name, bool):
 #Get's data, makes binary variables and divides dataset into training and test set
 def prepare_data(column, multiple=False):
     # A - train data: percentages of trains late that day
-    td = pd.read_csv('a-train-percents.csv')
+    td = pd.read_csv('../data/a-train-percents.csv')
 
     # Weather data
-    wd = pd.read_csv('weather.csv')
+    wd = pd.read_csv('../data/weather.csv')
     date_shaper(wd)
 
     if(multiple):
@@ -130,7 +130,3 @@ if __name__ == "__main__":
     #oneVSRest('tday')
     #some_regression_thing('snow')
     #dummy_classifier()
-
-
-
-

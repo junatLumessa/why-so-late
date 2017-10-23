@@ -111,7 +111,7 @@ def process_causes(df=None):
 
 # This is for counting percentages of departures that are late
 def process_departure_percentages(trainno):
-    line = '../data/data/-train-timetablerows.csv'
+    line = '../data/-train-timetablerows.csv'
     index = line.find('-')
     filepath = line[:index] + trainno + line[index:]
     print(filepath)
