@@ -17,10 +17,11 @@ In this section we will give a brief overlook on the data to be analyzed. All th
 
 ![Pic 2: Amount of rainfall in the past year.](rrday.png "Rain amount")
 
-[Page 1: Air temperature and delay percentage during last year](weather-late.html)
+![Pic 4:  Temperature and delay percentage during last year](bar-plot-all-trains.png "Air temperature and delays")
 
-or if HTML not visible, here:
-![Pic 4:  Air temperature and delay percentage during last year](bar-plot-all-trains.png "Air temperature and delays")
+![Pic 5:  Temperature, snow and delay percentage during last year](bar-plot-snow.png "Air temperature and delays")
+
+![Pic 6:  Temperature, rain and delay percentage during last year](bar-plot-rain.png "Air temperature and delays")
 
 
 ### Railway data
@@ -61,8 +62,11 @@ or if HTML not visible, here:
 | Käpylä                           | 10164 | 
 
 
-![Pic 5:  Average delays of commuter trains](averageDelays.png "Average delays of commuter trains")
+![Pic 7:  Average delays of commuter trains](averageDelays.png "Average delays of commuter trains")
 
+![Pic 8:  Percentages of delayed departures of commuter trains](delayedDepartures.png "Percentages of delayed departures of commuter trains")
+
+Pictures 7 and 8 contains 'V' and 'v' trains from the train history data but they aren't apparently real commuter train lines. [Official commuter train lines listed here](https://aikataulut.reittiopas.fi/linjat/fi/train.html)
 
 ## Predictions
 
