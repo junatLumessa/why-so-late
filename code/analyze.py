@@ -16,7 +16,7 @@ LINE_IDS = ['A', 'D', 'E', 'G', 'I', 'K', 'L', 'N', 'P', 'R', 'T', 'U', 'X', 'Y'
 BINARY_THRESHOLDS = {'rrday': 0, 'snow': 0, 'tday': 0, 'percents': 5}
 MULTIPLE_BINARY_THRESHOLDS = {'tday': [-10, -5, 0]}
 #FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/data/'
+DATA_PATH = '../data/'
 RFC_classifier = RandomForestClassifier(200)
 
 
@@ -41,7 +41,6 @@ def make_more_binarys(df, column):
 # binaryColumns: columns which are converted to binary values
 # multipleBinaryColumns: columns which are converted to multiple binary columns
 def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
-    print(len(binaryColumns))
     if column:
         wdColumns = [column, 'datetime']
     else:
@@ -68,7 +67,6 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
     td = td.merge(wd, on="date")
     perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
-    print(td.head(n=5))
 
     # suffles and splits data
     return train_test_split(td, perc, test_size=0.2)
@@ -131,47 +129,26 @@ def dummy_classifier(lineId, column):
     print(dummy.score(test_data, test_target, sample_weight=None))
 
 def randomForestClassifier(lineId):
-    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId)
-
     #unique, counts = np.unique(ytest, return_counts=True)
     #print(dict(zip(unique, counts)))
 
+    #print('Accuracy score for OVR classifier without binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
+
+    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['rrday', 'snow'], ['tday'])
     RFC = RandomForestClassifier(200)
     RFC.fit(Xtrain, ytrain)
     ypred = RFC.predict(Xtest)
-
-    print('Accuracy score for OVR classifier without binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
-
-    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['rrday', 'tday'], ['tday'])
-    RFC = RandomForestClassifier(200)
-    RFC.fit(Xtrain, ytrain)
-    ypred = RFC.predict(Xtest)
-
-    RFC_classifier = RFC
-
     print('Accuracy score for OVR classifier with binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
     print('')
+    return RFC
 
-# Trial to predict what trains are late on 26.10.2017
-def predict_next_day(lineId = 'D', datetime = '26.10.2017'):
-    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['snow', 'rrday'], ['tday'])
-    RFC = RandomForestClassifier(200)
-    RFC.fit(Xtrain, ytrain)
-    #print(Xtest.dtype)
-
-    d = {'rrday':1,  'snow':1, 'tday':3}
-    weather_day = pd.DataFrame(data=[d], columns=['rrday', 'snow', 'tday'])
-    print(weather_day)
-    pred = RFC.predict(weather_day)
-
-    print('Predicted: {}'.format(pred))
-
-    return 0
 ################################################################################
 
 def get_classifier_for_all_line_ids():
+    classifiers = []
     for lineId in LINE_IDS:
-        RFC = randomForestClassifier(lineId)
+        classifiers.append({'lineId': lineId, 'classifier': randomForestClassifier(lineId)})
+    return classifiers
 
 def save_predictions(df):
     csv_path = DATA_PATH + 'predictions.csv'
@@ -182,5 +159,4 @@ if __name__ == "__main__":
     #oneVSRest('A', 'tday')
     #some_regression_thing('A', 'snow')
     #dummy_classifier('A', 'tday')
-    #get_classifier_for_all_line_ids()
-    predict_next_day()
+    get_classifier_for_all_line_ids()
