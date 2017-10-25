@@ -15,7 +15,6 @@ In this section we will give a brief overlook on the data to be analyzed. All th
 
 ![Pic 1: Amount of snowfall in the past year.](snow.png "Snow amount")
 
-
 ![Pic 2: Amount of rainfall in the past year.](rrday.png "Rain amount")
 
 [Page 1: Air temperature and delay percentage during last year](weather-late.html)
@@ -25,8 +24,6 @@ or if HTML not visible, here:
 
 
 ### Railway data
-
-*ToDo*
 
 #### Most common causes for delays
 
@@ -45,6 +42,8 @@ or if HTML not visible, here:
 | Aikataulu ja liikennöinti        | 173   | 25.7                  |
 | Junanmuodostus                   | 149   | 14.0                  |
 | Vetokalusto                      | 45    | 11.2                  |
+
+[More information](https://github.com/finnishtransportagency/metadata/blob/master/csv/delay_codes.csv) about delay causes from finnish tranpost agency 
 
 ### Top 10 stations with delays (over 3min)
 
