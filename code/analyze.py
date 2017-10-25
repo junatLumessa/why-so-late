@@ -11,6 +11,8 @@ from sklearn import linear_model
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_squared_error, accuracy_score
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
 
 LINE_IDS = ['A', 'D', 'E', 'G', 'I', 'K', 'L', 'N', 'P', 'R', 'T', 'U', 'X', 'Y', 'Z']
 BINARY_THRESHOLDS = {'rrday': 0, 'snow': 0, 'tday': 0, 'percents': 5}
@@ -41,7 +43,6 @@ def make_more_binarys(df, column):
 # binaryColumns: columns which are converted to binary values
 # multipleBinaryColumns: columns which are converted to multiple binary columns
 def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
-    print(len(binaryColumns))
     if column:
         wdColumns = [column, 'datetime']
     else:
@@ -67,6 +68,7 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
 
     td = td.merge(wd, on="date")
     perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
+    #perc = td['percents']
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
     print(td.head(n=5))
 
@@ -84,22 +86,42 @@ def prepare_data_daily(lineId = 'A', column=None, binaryColumns=[], multipleBina
 
 ########################## Classificators #####################################
 
-def some_regression_thing(lineId, column):
-    training_data, test_data, train_target, test_target = prepare_data(lineId, column, [column])
+def some_regression_thing(lineId):
+    training_data, test_data, train_target, test_target = prepare_data(lineId, None, [], [])
 
     dummy = linear_model.LinearRegression()
     dummy.fit(training_data, train_target)
-    dummy.predict(test_data)
+    ypred = dummy.predict(test_data)
 
-    pr = dummy.score(test_data, test_target)
-    print('Linear regression score: ')
-    print(pr)
+    #ypred = ypred.reshape(-1,1)
+    #test_target = test_target.reshape(-1, 1)
 
-    return 0
+    pr = dummy.score(training_data, train_target)
+
+
+
+    test_target = [round(i) for i in test_target]
+    ypred = [round(i) for i in ypred]
+    print(ypred)
+    print(list(test_target))
+
+    correct = []
+    i = 0
+    for val, real in zip(ypred, test_target):
+        if val == real:
+            correct.append(val)
+        i += 1
+
+    correct_percent = len(correct)/len(test_target)
+    print('Accuracy score for Linear regression with binarys for {} trains: {:0.2f}'.format(lineId,
+                                                                                            correct_percent))
+    print('')
+
+    return correct_percent
 
 #Logistic regression with two binary variables (True/False)
-def logistic_regression(lineId, column):
-    training_data, test_data, train_target, test_target = prepare_data(lineId, column, [column])
+def logistic_regression(lineId):
+    training_data, test_data, train_target, test_target = prepare_data(lineId, None, ['snow','rrday'], ['tday'])
     print(training_data)
     logistic = LogisticRegression()
 
@@ -109,12 +131,13 @@ def logistic_regression(lineId, column):
     print(' Logistic regression score:')
     print(score)
 
-    wrong = [1 for i in test_target if i != predicted_log[test_target.tolist().index(i)]]
-    print('Amount of wrong classified: %d ' % len(wrong))
+    #wrong = [1 for i in test_target if i != predicted_log[test_target.tolist().index(i)]]
+    #print('Amount of wrong classified: %d ' % len(wrong))
+    return score
 
 #Nice try, prediction accuracy too good.... Maybe use floats rounded as ints for prediction? TODO
-def oneVSRest(lineId, column):
-    training_data, test_data, train_target, test_target = prepare_data(lineId, column, [], [column])
+def oneVSRest(lineId):
+    training_data, test_data, train_target, test_target = prepare_data(lineId, None,  ['snow','rrday'], ['tday'])
     OVR = OneVsRestClassifier(LogisticRegression()).fit(training_data, train_target)
     print('One vs rest accuracy: % .3f' % OVR.score(test_data, test_target))
 
@@ -122,7 +145,7 @@ def oneVSRest(lineId, column):
 
 def dummy_classifier(lineId, column):
     # not working yet :( sniff..
-    training_data, test_data, train_target, test_target = prepare_data(lineId, column, [column])
+    training_data, test_data, train_target, test_target = prepare_data(['snow','rrday'], ['tday'])
     dummy = DummyClassifier('stratified')
 
     dummy.fit(training_data, train_target)
@@ -131,18 +154,7 @@ def dummy_classifier(lineId, column):
     print(dummy.score(test_data, test_target, sample_weight=None))
 
 def randomForestClassifier(lineId):
-    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId)
-
-    #unique, counts = np.unique(ytest, return_counts=True)
-    #print(dict(zip(unique, counts)))
-
-    RFC = RandomForestClassifier(200)
-    RFC.fit(Xtrain, ytrain)
-    ypred = RFC.predict(Xtest)
-
-    print('Accuracy score for OVR classifier without binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
-
-    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['rrday', 'tday'], ['tday'])
+    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['snow','rrday'], ['tday'])
     RFC = RandomForestClassifier(200)
     RFC.fit(Xtrain, ytrain)
     ypred = RFC.predict(Xtest)
@@ -151,6 +163,21 @@ def randomForestClassifier(lineId):
 
     print('Accuracy score for OVR classifier with binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
     print('')
+
+    return accuracy_score(ytest, ypred)
+
+def gaussianProcessClassifier(lineId):
+    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['snow', 'rrday'], ['tday'])
+    gpc = GaussianProcessClassifier(1 * RBF(1.0))
+    gpc.fit(Xtrain, ytrain)
+
+    pred = gpc.predict(Xtest)
+    print('Accuracy score for Gaussian Process Classifier with binarys for {} trains: {:0.2f}'.format(lineId,
+                                                                                         accuracy_score(ytest, pred)))
+    print('')
+
+    return accuracy_score(ytest, pred)
+
 
 # Trial to predict what trains are late on 26.10.2017
 def predict_next_day(lineId = 'D', datetime = '26.10.2017'):
@@ -170,8 +197,21 @@ def predict_next_day(lineId = 'D', datetime = '26.10.2017'):
 ################################################################################
 
 def get_classifier_for_all_line_ids():
+
+    lineIds = []
+    scores = []
     for lineId in LINE_IDS:
         RFC = randomForestClassifier(lineId)
+        #GPC = gaussianProcessClassifier(lineId)
+        #linear = some_regression_thing(lineId)
+        #OVR = oneVSRest(lineId)
+        #LOG = logistic_regression(lineId)
+        lineIds.append(lineId)
+        scores.append(RFC)
+    csv_path = DATA_PATH + "oneVSRest.csv"
+    df = pd.DataFrame({'lineId': lineIds, 'score':scores})
+    df.to_csv(csv_path , index=False)
+
 
 def save_predictions(df):
     csv_path = DATA_PATH + 'predictions.csv'
@@ -182,5 +222,5 @@ if __name__ == "__main__":
     #oneVSRest('A', 'tday')
     #some_regression_thing('A', 'snow')
     #dummy_classifier('A', 'tday')
-    #get_classifier_for_all_line_ids()
-    predict_next_day()
+    get_classifier_for_all_line_ids()
+    #gaussianProcessClassifier('A')
