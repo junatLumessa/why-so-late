@@ -18,7 +18,7 @@ LINE_IDS = ['A', 'D', 'E', 'G', 'I', 'K', 'L', 'N', 'P', 'R', 'T', 'U', 'X', 'Y'
 BINARY_THRESHOLDS = {'rrday': 0, 'snow': 0, 'tday': 0, 'percents': 5}
 MULTIPLE_BINARY_THRESHOLDS = {'tday': [-10, -5, 0]}
 #FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/data/'
+DATA_PATH = '../data/'
 RFC_classifier = RandomForestClassifier(200)
 
 
@@ -70,7 +70,6 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
     perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
     #perc = td['percents']
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
-    print(td.head(n=5))
 
     # suffles and splits data
     return train_test_split(td, perc, test_size=0.2)
@@ -155,16 +154,13 @@ def dummy_classifier(lineId, column):
 
 def randomForestClassifier(lineId):
     Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['snow','rrday'], ['tday'])
+
     RFC = RandomForestClassifier(200)
     RFC.fit(Xtrain, ytrain)
     ypred = RFC.predict(Xtest)
-
-    RFC_classifier = RFC
-
     print('Accuracy score for OVR classifier with binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
     print('')
-
-    return accuracy_score(ytest, ypred)
+    return RFC
 
 def gaussianProcessClassifier(lineId):
     Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['snow', 'rrday'], ['tday'])
@@ -195,8 +191,8 @@ def predict_next_day(lineId = 'D', datetime = '26.10.2017'):
 
     return 0
 ################################################################################
-
-def get_classifier_for_all_line_ids():
+'''
+def save_scores():
 
     lineIds = []
     scores = []
@@ -211,16 +207,19 @@ def get_classifier_for_all_line_ids():
     csv_path = DATA_PATH + "oneVSRest.csv"
     df = pd.DataFrame({'lineId': lineIds, 'score':scores})
     df.to_csv(csv_path , index=False)
+'''
 
+def get_classifier_for_all_line_ids():
+    classifiers = []
+    for lineId in LINE_IDS:
+        classifiers.append({'lineId': lineId, 'classifier': randomForestClassifier(lineId)})
+    return classifiers
 
 def save_predictions(df):
     csv_path = DATA_PATH + 'predictions.csv'
     df.to_csv(DATA_PATH , index=False)
 
 if __name__ == "__main__":
-    #logistic_regression('A', 'tday')
-    #oneVSRest('A', 'tday')
-    #some_regression_thing('A', 'snow')
-    #dummy_classifier('A', 'tday')
     get_classifier_for_all_line_ids()
-    #gaussianProcessClassifier('A')
+
+
