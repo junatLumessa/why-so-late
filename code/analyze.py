@@ -13,13 +13,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_squared_error, accuracy_score
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
+from sklearn import svm
+from sklearn.model_selection import cross_val_score
 
 LINE_IDS = ['A', 'D', 'E', 'G', 'I', 'K', 'L', 'N', 'P', 'R', 'T', 'U', 'X', 'Y', 'Z']
 BINARY_THRESHOLDS = {'rrday': 0, 'snow': 0, 'tday': 0, 'percents': 5}
 MULTIPLE_BINARY_THRESHOLDS = {'tday': [-10, -5, 0]}
 #FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/'
-RFC_classifier = RandomForestClassifier(200)
+DATA_PATH = '../data/data/'
+PERC = []
+TD = []
 
 
 ####################### Data preparing #########################################
@@ -43,12 +46,25 @@ def make_more_binarys(df, column):
 # binaryColumns: columns which are converted to binary values
 # multipleBinaryColumns: columns which are converted to multiple binary columns
 def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
+    td, perc = get_dataset(lineId, column, binaryColumns, multipleBinaryColumns)
+    # suffles and splits data
+    return train_test_split(td, perc, test_size=0.2)
+
+#Same as before, but we do not calculate daily percentages.
+#Instead we have binary 0/1 indicating if service was late or not
+def prepare_data_daily(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
+    td = process_service_lateness('A')
+
+
+    return 0
+
+def get_dataset(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
     if column:
         wdColumns = [column, 'datetime']
     else:
         wdColumns = ['rrday', 'snow', 'tday', 'datetime']
 
-    # Train data: percentages of trains late that day for given line id
+        # Train data: percentages of trains late that day for given line id
     td = process_departure_percentages(lineId)
 
     # Weather data
@@ -68,41 +84,30 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
 
     td = td.merge(wd, on="date")
     perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
-    #perc = td['percents']
+    # perc = td['percents']
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
 
-    # suffles and splits data
-    return train_test_split(td, perc, test_size=0.2)
-
-#Same as before, but we do not calculate daily percentages.
-#Instead we have binary 0/1 indicating if service was late or not
-def prepare_data_daily(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
-    td = process_service_lateness('A')
-
-
-    return 0
+    return td, perc
 
 
 ########################## Classificators #####################################
 
 def some_regression_thing(lineId):
     training_data, test_data, train_target, test_target = prepare_data(lineId, None, [], [])
+    td, perc = get_dataset(lineId, None, [], [])
 
-    dummy = linear_model.LinearRegression()
-    dummy.fit(training_data, train_target)
-    ypred = dummy.predict(test_data)
+    svc = svm.SVC(kernel='poly', degree=3)
+    svc.fit(training_data, train_target)
+    ypred = svc.predict(test_data)
 
     #ypred = ypred.reshape(-1,1)
     #test_target = test_target.reshape(-1, 1)
 
-    pr = dummy.score(training_data, train_target)
-
-
+    pr = cross_val_score(svc, td, perc, cv=5)
+    print('Cross validation score with {} computing times : {:0.2f}'.format(5, pr.mean()))
 
     test_target = [round(i) for i in test_target]
     ypred = [round(i) for i in ypred]
-    print(ypred)
-    print(list(test_target))
 
     correct = []
     i = 0
@@ -110,9 +115,10 @@ def some_regression_thing(lineId):
         if val == real:
             correct.append(val)
         i += 1
-
+    
     correct_percent = len(correct)/len(test_target)
-    print('Accuracy score for Linear regression with binarys for {} trains: {:0.2f}'.format(lineId,
+
+    print('Accuracy score for Polynomial (degree=3) kernel regression with binarys for {} trains: {:0.2f}'.format(lineId,
                                                                                             correct_percent))
     print('')
 
@@ -220,6 +226,7 @@ def save_predictions(df):
     df.to_csv(DATA_PATH , index=False)
 
 if __name__ == "__main__":
-    get_classifier_for_all_line_ids()
+    #get_classifier_for_all_line_ids()
+    some_regression_thing('A')
 
 
