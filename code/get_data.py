@@ -7,11 +7,10 @@ import pytz
 
 digitrafficUrl = "https://rata.digitraffic.fi/api/v1/"
 #FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/data/'
+DATA_PATH = '../data/'
 
-def get_data_for_current_day():
-    today = datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%Y-%m-%d')
-    url = digitrafficUrl + "trains/" + str(today)
+def get_data_for_day(day):
+    url = digitrafficUrl + "trains/" + str(day)
     df = get_df_from_url(url)
     timeTableRows = process_time_table_rows(df, 0, False)
     process_causes(timeTableRows)

@@ -2,19 +2,16 @@ import requests
 import os
 import pandas as pd
 from xml.etree import ElementTree
-from datetime import datetime
-import pytz
 
 fmiUrl = 'http://data.fmi.fi/fmi-apikey/' + str(os.getenv('FMI_API_KEY')) + '/wfs'
 
-def get_weather_forecast_for_current_day():
-    today = datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%Y-%m-%d')
+def get_weather_forecast_for_day(date):
     parameters = {
         'request': 'getFeature',
         'storedquery_id': 'fmi::forecast::hirlam::surface::obsstations::simple',
         'place': 'Helsinki',
-        'starttime': today + 'T00:00:00Z',
-        'endtime': today + 'T23:00:00Z',
+        'starttime': date + 'T00:00:00Z',
+        'endtime': date + 'T23:00:00Z',
         'timestep': 60
     }
 
@@ -100,5 +97,6 @@ if __name__ == "__main__":
     #daily = get_daily_weather_observations('2016-10-15T00:00:00Z', '2017-10-15T00:00:00Z')
     #daily.to_csv('../data/weather.csv', index=False)
 
-    today = get_weather_forecast_for_current_day()
-    today.to_csv('../data/weather_today.csv', index=False)
+    today = get_weather_forecast_for_day('2017-10-26')
+    print(today.columns)
+    #today.to_csv('../data/weather_today.csv', index=False)
