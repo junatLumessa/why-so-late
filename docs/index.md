@@ -15,18 +15,16 @@ In this section we will give a brief overlook on the data to be analyzed. All th
 
 ![Pic 1: Amount of snowfall in the past year.](snow.png "Snow amount")
 
-
 ![Pic 2: Amount of rainfall in the past year.](rrday.png "Rain amount")
 
-[Page 1: Air temperature and delay percentage during last year](weather-late.html)
+![Pic 4:  Temperature and delay percentage during last year](bar-plot-all-trains.png "Air temperature and delays")
 
-or if HTML not visible, here:
-![Pic 4:  Air temperature and delay percentage during last year](bar-plot-all-trains.png "Air temperature and delays")
+![Pic 5:  Temperature, snow and delay percentage during last year](bar-plot-snow.png "Air temperature, snow and delays")
+
+![Pic 6:  Temperature, rain and delay percentage during last year](bar-plot-rain.png "Air temperature, rain and delays")
 
 
 ### Railway data
-
-*ToDo*
 
 #### Most common causes for delays
 
@@ -46,6 +44,8 @@ or if HTML not visible, here:
 | Junanmuodostus                   | 149   | 14.0                  |
 | Vetokalusto                      | 45    | 11.2                  |
 
+[More information](https://github.com/finnishtransportagency/metadata/blob/master/csv/delay_codes.csv) about delay causes from finnish tranpost agency 
+
 ### Top 10 stations with delays (over 3min)
 
 | Station                          | Count |
@@ -62,12 +62,22 @@ or if HTML not visible, here:
 | Käpylä                           | 10164 | 
 
 
-![Pic 5:  Average delays of commuter trains](averageDelays.png "Average delays of commuter trains")
+![Pic 7:  Average delays of commuter trains](averageDelays.png "Average delays of commuter trains")
 
+![Pic 8:  Percentages of delayed departures of commuter trains](delayedDepartures.png "Percentages of delayed departures of commuter trains")
+
+Pictures 7 and 8 contains 'V' and 'v' trains from the train history data but they aren't apparently real commuter train lines. [Official commuter train lines listed here](https://aikataulut.reittiopas.fi/linjat/fi/train.html)
 
 ## Predictions
 
-*ToDo*
+We tried many different kinds of models for the data.
+
+### Logistic regression
+Data was not linear and we couldn't make any linear regression analysis.
+
+### Gaussian process classifier (with 1 kernel, default) 
+### Random forest classifier (200 trees)
+### Dummy classifier
 
 ## Conclusions
 
