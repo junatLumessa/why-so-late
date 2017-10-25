@@ -46,6 +46,22 @@ or if HTML not visible, here:
 | Junanmuodostus                   | 149   | 14.0                  |
 | Vetokalusto                      | 45    | 11.2                  |
 
+### Top 10 stations with delays (over 3min)
+
+| Station                          | Count |
+|:---------------------------------|------:|
+| Päärautatieasema                 | 12404 |
+| Pasilan asema                    | 30529 |
+| Oulunkylä                        | 11749 | 
+| Malmi                            | 11280 | 
+| Tikkurila                        | 18087 | 
+| Kerava                           | 10374 | 
+| Huopalahti                       | 10374 | 
+| Puistola                         | 11180 | 
+| Hiekkaharju                      | 10342 | 
+| Käpylä                           | 10164 | 
+
+
 ![Pic 5:  Average delays of commuter trains](averageDelays.png "Average delays of commuter trains")
 
 

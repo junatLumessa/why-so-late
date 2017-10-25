@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 import numpy as np
-from get_data import process_departure_percentages
+from get_data import process_departure_percentages, process_service_lateness
 from datetime import date, timedelta
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -15,6 +15,9 @@ from sklearn.metrics import mean_squared_error, accuracy_score
 LINE_IDS = ['A', 'D', 'E', 'G', 'I', 'K', 'L', 'N', 'P', 'R', 'T', 'U', 'X', 'Y', 'Z']
 BINARY_THRESHOLDS = {'rrday': 0, 'snow': 0, 'tday': 0, 'percents': 5}
 MULTIPLE_BINARY_THRESHOLDS = {'tday': [-10, -5, 0]}
+#FILL HERE YOUR DATA FOLDER PATH!
+DATA_PATH = '../data/data/'
+RFC_classifier = RandomForestClassifier(200)
 
 
 ####################### Data preparing #########################################
@@ -38,6 +41,7 @@ def make_more_binarys(df, column):
 # binaryColumns: columns which are converted to binary values
 # multipleBinaryColumns: columns which are converted to multiple binary columns
 def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
+    print(len(binaryColumns))
     if column:
         wdColumns = [column, 'datetime']
     else:
@@ -47,7 +51,8 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
     td = process_departure_percentages(lineId)
 
     # Weather data
-    wd = pd.read_csv('../data/weather.csv')
+    weather_path = DATA_PATH + 'weather.csv'
+    wd = pd.read_csv(weather_path)
     wd = wd[wdColumns]
 
     wd['date'] = wd['datetime'].str.slice(0, 10)
@@ -63,9 +68,18 @@ def prepare_data(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColu
     td = td.merge(wd, on="date")
     perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
+    print(td.head(n=5))
 
     # suffles and splits data
     return train_test_split(td, perc, test_size=0.2)
+
+#Same as before, but we do not calculate daily percentages.
+#Instead we have binary 0/1 indicating if service was late or not
+def prepare_data_daily(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColumns=[]):
+    td = process_service_lateness('A')
+
+
+    return 0
 
 
 ########################## Classificators #####################################
@@ -133,17 +147,40 @@ def randomForestClassifier(lineId):
     RFC.fit(Xtrain, ytrain)
     ypred = RFC.predict(Xtest)
 
+    RFC_classifier = RFC
+
     print('Accuracy score for OVR classifier with binarys for {} trains: {:0.2f}'.format(lineId, accuracy_score(ytest, ypred)))
     print('')
+
+# Trial to predict what trains are late on 26.10.2017
+def predict_next_day(lineId = 'D', datetime = '26.10.2017'):
+    Xtrain, Xtest, ytrain, ytest = prepare_data(lineId, None, ['snow', 'rrday'], ['tday'])
+    RFC = RandomForestClassifier(200)
+    RFC.fit(Xtrain, ytrain)
+    #print(Xtest.dtype)
+
+    d = {'rrday':1,  'snow':1, 'tday':3}
+    weather_day = pd.DataFrame(data=[d], columns=['rrday', 'snow', 'tday'])
+    print(weather_day)
+    pred = RFC.predict(weather_day)
+
+    print('Predicted: {}'.format(pred))
+
+    return 0
 ################################################################################
 
 def get_classifier_for_all_line_ids():
     for lineId in LINE_IDS:
         RFC = randomForestClassifier(lineId)
 
+def save_predictions(df):
+    csv_path = DATA_PATH + 'predictions.csv'
+    df.to_csv(DATA_PATH , index=False)
+
 if __name__ == "__main__":
     #logistic_regression('A', 'tday')
     #oneVSRest('A', 'tday')
     #some_regression_thing('A', 'snow')
     #dummy_classifier('A', 'tday')
-    get_classifier_for_all_line_ids()
+    #get_classifier_for_all_line_ids()
+    predict_next_day()
