@@ -6,6 +6,8 @@ import os.path
 import pytz
 
 digitrafficUrl = "https://rata.digitraffic.fi/api/v1/"
+#FILL HERE YOUR DATA FOLDER PATH!
+DATA_PATH = '../data/data/'
 
 def get_data_for_current_day():
     today = datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%Y-%m-%d')
@@ -87,7 +89,8 @@ def combine_three_parts():
     del df3['timeTableRows']
     print(3)
 
-    timeTableRows.to_csv('../data/all-train-timetablerows.csv', index=False)
+    csv_path = DATA_PATH + 'all-train-timetablerows.csv'
+    timeTableRows.to_csv(csv_path, index=False)
     print(4)
     df = df.append(df2, ignore_index=True)
     df = df.append(df3, ignore_index=True)
@@ -113,15 +116,17 @@ def process_causes(df=None):
 
 # This is for counting percentages of departures that are late
 def process_departure_percentages(trainno):
-    to_line = '../data/-train-percents.csv'
+    to_line = DATA_PATH +'-train-percents.csv'
     index = to_line.find('-')
     csvpath = to_line[:index] + trainno + to_line[index:]
 
     if (os.path.isfile(csvpath)):
         return pd.read_csv(csvpath)
 
-    data = pd.read_csv('../data/all-train-timetablerows.csv')
-    trainInfo = pd.read_csv('../data/all-train.csv')
+    get_path = DATA_PATH + 'all-train-timetablerows.csv'
+    data = pd.read_csv(get_path)
+    traininfo_path = DATA_PATH + 'all-train.csv'
+    trainInfo = pd.read_csv(traininfo_path)
     trainInfo = trainInfo.rename(columns = {'Unnamed: 0': 'idx'})
     trainInfo = trainInfo[['idx', 'commuterLineID']]
     data = data.merge(trainInfo, on="idx")
@@ -136,14 +141,13 @@ def process_departure_percentages(trainno):
     current = data.iloc[0]['scheduledTime'][:10]
 
     j = 0
-    # sum = 0
     for index, row in data.iterrows():
 
         date = row['scheduledTime'][:10]
 
         if (date > current):
             all_len = len(temp)
-            late = [1 for i in temp if i >= 3]
+            late = [1 for i in temp if i > 3]
             late_len = len(late)
             percents.append((late_len / all_len) * 100)
             dates.append(current)
@@ -169,10 +173,52 @@ def process_departure_percentages(trainno):
 
     return mean_data
 
+#Same as above,  but binary variables to every service if late / or not
+#TODO
+def process_service_lateness(trainno):
+    to_line = DATA_PATH +'-train-late.csv'
+    index = to_line.find('-')
+    csvpath = to_line[:index] + trainno + to_line[index:]
+
+    if (os.path.isfile(csvpath)):
+        return pd.read_csv(csvpath)
+
+    get_path = DATA_PATH + 'all-train-timetablerows.csv'
+    data = pd.read_csv(get_path)
+    traininfo_path = DATA_PATH + 'all-train.csv'
+    trainInfo = pd.read_csv(traininfo_path)
+    trainInfo = trainInfo.rename(columns = {'Unnamed: 0': 'idx'})
+    trainInfo = trainInfo[['idx', 'commuterLineID']]
+    data = data.merge(trainInfo, on="idx")
+    if (trainno != 'all'):
+        data = data[(data['type'] == 'DEPARTURE') & (data['commuterLineID'] == trainno)]
+    else:
+        data = data[(data['type'] == 'DEPARTURE') & (data['commuterLineID'] == trainno)]
+
+    temp = []
+    percents = []
+    dates = []
+    current = data.iloc[0]['scheduledTime'][:10]
+
+    for index, row in data.iterrows():
+        late = row['differenceInMinutes'] > 3
+        temp.append(late)
+        dates.append(row['scheduledTime'])
+
+    data = pd.DataFrame({'date': dates, 'late': temp})
+
+    to_line = DATA_PATH + '-train-late.csv'
+    index = to_line.find('-')
+    csvpath = to_line[:index] + trainno + to_line[index:]
+    data.to_csv(csvpath, index=False)
+
+    return 0
+
 
 if __name__ == "__main__":
     #get_data_in_three_parts(date(2016, 10, 15), date(2017, 10, 15))
     #combine_three_parts()
     #process_causes()
-    process_departure_percentages('a')
-    get_data_for_current_day()
+    #process_departure_percentages('a')
+    #get_data_for_current_day()
+    process_service_lateness('A')
