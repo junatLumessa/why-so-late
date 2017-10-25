@@ -19,9 +19,9 @@ In this section we will give a brief overlook on the data to be analyzed. All th
 
 ![Pic 4:  Temperature and delay percentage during last year](bar-plot-all-trains.png "Air temperature and delays")
 
-![Pic 5:  Temperature, snow and delay percentage during last year](bar-plot-snow.png "Air temperature and delays")
+![Pic 5:  Temperature, snow and delay percentage during last year](bar-plot-snow.png "Air temperature, snow and delays")
 
-![Pic 6:  Temperature, rain and delay percentage during last year](bar-plot-rain.png "Air temperature and delays")
+![Pic 6:  Temperature, rain and delay percentage during last year](bar-plot-rain.png "Air temperature, rain and delays")
 
 
 ### Railway data
@@ -70,7 +70,14 @@ Pictures 7 and 8 contains 'V' and 'v' trains from the train history data but the
 
 ## Predictions
 
-*ToDo*
+We tried many different kinds of models for the data.
+
+### Logistic regression
+Data was not linear and we couldn't make any linear regression analysis.
+
+### Gaussian process classifier (with 1 kernel, default) 
+### Random forest classifier (200 trees)
+### Dummy classifier
 
 ## Conclusions
 
