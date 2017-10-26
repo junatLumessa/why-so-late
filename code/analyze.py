@@ -83,8 +83,8 @@ def get_dataset(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColum
             make_more_binarys(wd, column)
 
     td = td.merge(wd, on="date")
-    perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
-    # perc = td['percents']
+    #perc = (td['percents'] >= BINARY_THRESHOLDS['percents']).astype('int')
+    perc = td['percents']
     td = td.drop(['date', 'datetime', 'percents'], axis=1)
 
     return td, perc
@@ -94,14 +94,11 @@ def get_dataset(lineId = 'A', column=None, binaryColumns=[], multipleBinaryColum
 
 def some_regression_thing(lineId):
     training_data, test_data, train_target, test_target = prepare_data(lineId, None, [], [])
-    td, perc = get_dataset(lineId, None, [], [])
+    #td, perc = get_dataset(lineId, None, [], [])
 
     svc = svm.SVC(kernel='poly', degree=3)
     svc.fit(training_data, train_target)
     ypred = svc.predict(test_data)
-
-    #ypred = ypred.reshape(-1,1)
-    #test_target = test_target.reshape(-1, 1)
 
     #pr = cross_val_score(svc, td, perc, cv=5)
     #print('Cross validation score with {} computing times : {:0.2f}'.format(5, pr.mean()))
@@ -109,13 +106,15 @@ def some_regression_thing(lineId):
     test_target = [round(i) for i in test_target]
     ypred = [round(i) for i in ypred]
 
+    #print(ypred)
+
     correct = []
     i = 0
     for val, real in zip(ypred, test_target):
         if val == real:
             correct.append(val)
         i += 1
-    
+
     correct_percent = len(correct)/len(test_target)
 
     print('Accuracy score for Polynomial (degree=3) kernel regression with binarys for {} trains: {:0.2f}'.format(lineId,
@@ -123,6 +122,7 @@ def some_regression_thing(lineId):
     print('')
 
     return svc
+
 
 #Logistic regression with two binary variables (True/False)
 def logistic_regression(lineId):
@@ -227,6 +227,6 @@ def save_predictions(df):
 
 if __name__ == "__main__":
     #get_classifier_for_all_line_ids()
-    some_regression_thing('A')
+    some_regression_thing2('A')
 
 

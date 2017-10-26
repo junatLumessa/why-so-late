@@ -70,15 +70,52 @@ Pictures 7 and 8 contains 'V' and 'v' trains from the train history data but the
 
 ## Predictions
 
-We tried many different kinds of models for the data.
+We tried many different kinds of models for the data. Our best approach was to make categorical variables and train classifiers with them to make predictions. The classifiers we tried were Gaussian process Classifier, Random Forest Classifier, Dummy Classifier and Support vector classifier. Below we present results from two of them.
 
-### Logistic regression
-Data was not linear and we couldn't make any linear regression analysis.
+Data was not linear and we couldn't make any linear regression analysis. We also tried Polynomial regression analysis with degree 3 kernel for percents (continuous variable), but prediction accuracy dropped significantly (4-25%).
 
-### Gaussian process classifier (with 1 kernel, default) 
+
 ### Random forest classifier (200 trees)
-### Dummy classifier
+
+| Train type                       | Accuracy | With random input|
+|:---------------------------------|---------|------------------:|
+|A                                 |0.93| 0.86|
+|D                                 |0.64|0.89|
+|E                                 |0.84|0.88|
+|G                                 |0.83|1.0|
+|I                                 |0.66|0.46|
+|K                                 |0.85|0.7|
+|L                                 |0.56|0.79|
+|N                                 |0.75|0.71|
+|P                                 |0.74|0.64|
+|R                                 |0.88|0.96|
+|T                                 |0.53|0.46|
+|U                                 |0.75|0.79|
+|X                                 |0.9|0.84|
+|Y                                 |0.9|1.0|
+|Z                                 |0.7|0.82|
+
+
+### Support vector classifier (Polynomial degree 3 kernel)
+
+| Train type                       | >5% (Yes/No) |
+|:---------------------------------|------:|
+| A                                | No |
+| D                                | Yes |
+| E                                | No | 
+| G                                | Yes | 
+| I                                | No | 
+| K                                | No | 
+| L                                | No | 
+| N                                | No | 
+| P                                | No | 
+| R                                | Yes | 
+| T                                | Yes | 
+| U                                | No | 
+| X                                | No | 
+| Y                                | No | 
+| Z                                | Yes | 
 
 ## Conclusions
 
-*ToDo*
+Making an accurate prediction when trains are late is challenging. Although our graphs show some correlation between weather data and trains being late, the classifiers results were not dependent on weather data. Instead, the classifiers results were based on train data purely, as some train types are more often late than others.
