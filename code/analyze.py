@@ -1,6 +1,7 @@
 import pandas as pd
 import datetime
 import numpy as np
+from config import DATA_PATH
 from get_data import process_departure_percentages, process_service_lateness
 from datetime import date, timedelta
 from sklearn.model_selection import train_test_split
@@ -19,8 +20,6 @@ from sklearn.model_selection import cross_val_score
 LINE_IDS = ['A', 'D', 'E', 'G', 'I', 'K', 'L', 'N', 'P', 'R', 'T', 'U', 'X', 'Y', 'Z']
 BINARY_THRESHOLDS = {'rrday': 0, 'snow': 0, 'tday': 0, 'percents': 5}
 MULTIPLE_BINARY_THRESHOLDS = {'tday': [-10, -5, 0]}
-#FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/data/'
 PERC = []
 TD = []
 
@@ -227,6 +226,4 @@ def save_predictions(df):
 
 if __name__ == "__main__":
     #get_classifier_for_all_line_ids()
-    some_regression_thing2('A')
-
-
+    some_regression_thing('A')
