@@ -103,8 +103,8 @@ def some_regression_thing(lineId):
     #ypred = ypred.reshape(-1,1)
     #test_target = test_target.reshape(-1, 1)
 
-    pr = cross_val_score(svc, td, perc, cv=5)
-    print('Cross validation score with {} computing times : {:0.2f}'.format(5, pr.mean()))
+    #pr = cross_val_score(svc, td, perc, cv=5)
+    #print('Cross validation score with {} computing times : {:0.2f}'.format(5, pr.mean()))
 
     test_target = [round(i) for i in test_target]
     ypred = [round(i) for i in ypred]
@@ -122,7 +122,7 @@ def some_regression_thing(lineId):
                                                                                             correct_percent))
     print('')
 
-    return correct_percent
+    return svc
 
 #Logistic regression with two binary variables (True/False)
 def logistic_regression(lineId):
@@ -218,7 +218,7 @@ def save_scores():
 def get_classifier_for_all_line_ids():
     classifiers = []
     for lineId in LINE_IDS:
-        classifiers.append({'lineId': lineId, 'classifier': randomForestClassifier(lineId)})
+        classifiers.append({'lineId': lineId, 'classifier': some_regression_thing(lineId)})
     return classifiers
 
 def save_predictions(df):

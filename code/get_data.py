@@ -7,7 +7,7 @@ import pytz
 
 digitrafficUrl = "https://rata.digitraffic.fi/api/v1/"
 #FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/'
+DATA_PATH = '../data/data/'
 
 def get_data_for_day(day):
     url = digitrafficUrl + "trains/" + str(day)
