@@ -66,7 +66,11 @@ In this section we will give a brief overlook on the data to be analyzed. All th
 
 ![Pic 8:  Percentages of delayed departures of commuter trains](delayedDepartures.png "Percentages of delayed departures of commuter trains")
 
-Pictures 7 and 8 contains 'V' and 'v' trains from the train history data but they aren't apparently real commuter train lines. [Official commuter train lines listed here](https://aikataulut.reittiopas.fi/linjat/fi/train.html)
+![Pic 9:  Amount of cancelled commuter trains](amountOfCancelledTrains.png "Amount of cancelled commuter trains")
+
+
+Train history data contains 'V' and 'v' trains but they aren't apparently real commuter train lines. [Official commuter train lines listed here](https://aikataulut.reittiopas.fi/linjat/fi/train.html)
+
 
 ## Predictions
 
