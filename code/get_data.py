@@ -2,12 +2,11 @@ import json
 import requests
 import pandas as pd
 from datetime import date, datetime, timedelta
+from config import DATA_PATH
 import os.path
 import pytz
 
 digitrafficUrl = "https://rata.digitraffic.fi/api/v1/"
-#FILL HERE YOUR DATA FOLDER PATH!
-DATA_PATH = '../data/data/'
 
 def get_data_for_day(day):
     url = digitrafficUrl + "trains/" + str(day)
