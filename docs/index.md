@@ -8,7 +8,7 @@
 
 ## Data overview
 
-In this section we will give a brief overlook on the data to be analyzed. All the data has been collected from the past year (October 2016 - October 2017).
+In this section we will give a brief overlook on the data to be analyzed. We used open weather and railway data from the past year (15 October 2016 - 15 October 2017) from [Finnish Meteorological Institute](https://en.ilmatieteenlaitos.fi/open-data) and [Finnish Transport Agency](https://rata.digitraffic.fi).
 
 ### Weather data
 
@@ -43,20 +43,20 @@ In this section we will give a brief overlook on the data to be analyzed. All th
 | Junanmuodostus                   | 149   | 14.0                  |
 | Vetokalusto                      | 45    | 11.2                  |
 
-[More information](https://github.com/finnishtransportagency/metadata/blob/master/csv/delay_codes.csv) about delay causes from finnish tranpost agency 
+[More information](https://github.com/finnishtransportagency/metadata/blob/master/csv/delay_codes.csv) about delay causes from Finnish Tranport Agency.
 
 ### Top 10 stations with delays (over 3min)
 
 | Station                          | Count |
 |:---------------------------------|------:|
-| Päärautatieasema                 | 12404 |
 | Pasilan asema                    | 30529 |
+| Tikkurila                        | 18087 |
+| Päärautatieasema                 | 12404 | 
 | Oulunkylä                        | 11749 | 
-| Malmi                            | 11280 | 
-| Tikkurila                        | 18087 | 
+| Malmi                            | 11280 |
+| Puistola                         | 11180 |
 | Kerava                           | 10374 | 
 | Huopalahti                       | 10374 | 
-| Puistola                         | 11180 | 
 | Hiekkaharju                      | 10342 | 
 | Käpylä                           | 10164 | 
 
