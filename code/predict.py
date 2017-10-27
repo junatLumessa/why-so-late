@@ -31,7 +31,9 @@ def predict_day(date='2017-10-26'):
     for classifier in classifiers:
         if classifier['lineId'] not in commuterLineIDs:
             continue
-        result.append({'lineId': classifier['lineId'], 'prediction': classifier['classifier'].predict(weather)[0]})
+        prediction = classifier['classifier'].predict(weather)[0]
+        print(prediction)
+        result.append({'lineId': classifier['lineId'], 'prediction': prediction})
 
     res = pd.DataFrame(result)
     print(res)
