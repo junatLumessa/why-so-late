@@ -82,6 +82,7 @@ Data was not linear and we couldn't make any linear regression analysis. We also
 
 ### Random forest classifier (200 trees)
 
+One of the most accurate classifiers we tested was Random Forest Clasifier with 200 trees. As an input, weather variables was given as data and train delay information as target.
 
 We suspected that our classifier was merely guessing the answers instead of using weather data for prediction. To verify this wasn't the case, we gave the classifier random data as input.
 
