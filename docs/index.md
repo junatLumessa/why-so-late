@@ -138,3 +138,5 @@ VR had cancelled [18% of the trains on 26.10.2017](https://www.hsl.fi/en/traffic
 ## Conclusions
 
 Making an accurate prediction of train delays was challenging. Although our graphs show some correlation between weather data and trains being late, the classifiers results were not dependent on weather data. Instead, the classifiers results were based on train data purely, as some train types are typically more often late than others.
+
+
