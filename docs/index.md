@@ -109,9 +109,7 @@ The results below show that the classifiers result did not get any worse with ra
 
 ### Support vector classifier (Polynomial degree 3 kernel)
 
-Prediction if more than 5% of trains are late Yes/No and comparision to real data (26.10.2017)
-
-Weather information: Temperature = ?C, Snow = ?cm and Rain = ?mm 
+Prediction from weather data (temperature, rain, snow) if more than 5% of trains are late Yes/No and comparision to real data (26.10.2017)
 
 | Train type                  | Prediction | Real delays | Delays %
 |:---------------------------------|------:|-----:|-----:|
