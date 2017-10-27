@@ -80,6 +80,11 @@ Data was not linear and we couldn't make any linear regression analysis. We also
 
 ### Random forest classifier (200 trees)
 
+
+We suspected that our classifier was merely guessing the answers instead of using weather data for prediction. To verify this wasn't the case, we gave the classifier random data as input.
+
+The results below show that the classifiers result did not get any worse with random data.
+
 | Train type                       | Accuracy | With random input|
 |:---------------------------------|---------|------------------:|
 |A                                 |0.93| 0.86|
