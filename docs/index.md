@@ -102,24 +102,33 @@ Data was not linear and we couldn't make any linear regression analysis. We also
 
 ### Support vector classifier (Polynomial degree 3 kernel)
 
-| Train type                       | >5% (Yes/No) |
-|:---------------------------------|------:|
-| A                                | No |
-| D                                | Yes |
-| E                                | No | 
-| G                                | Yes | 
-| I                                | No | 
-| K                                | No | 
-| L                                | No | 
-| N                                | No | 
-| P                                | No | 
-| R                                | Yes | 
-| T                                | Yes | 
-| U                                | No | 
-| X                                | No | 
-| Y                                | No | 
-| Z                                | Yes | 
+Prediction if more than 5% of trains are late Yes/No and comparision to real data (26.10.2017)
+
+Weather information: Temperature = ?C, Snow = ?cm and Rain = ?mm 
+
+| Train type                  | Prediction | Real delays | Delays %
+|:---------------------------------|------:|-----:|-----:|
+| A                                | No    | No   | 0,08 |
+| D                                | Yes   | Yes  | 57   |
+| E                                | No    | Yes  | 8,5  |
+| G                                | Yes   | Yes  | 56   |
+| I                                | No    | No   | 4,9  |
+| K                                | No    | No   | 2,0  |
+| L                                | No    | Yes  | 39   |
+| N                                | No    | Yes  | 6,7  |
+| P                                | No    | No   | 1,6  |
+| R                                | Yes   | Yes  | 52   |
+| T                                | Yes   | Yes  | 48   |
+| U                                | No    | Yes  | 8,1  |
+| X                                | No    | Yes  | 41   |
+| Y                                | No    | Yes  | 16   |
+| Z                                | Yes   | Yes  | 31   |
+
+Comparing prediction and real data results in 60% prediction accuracy.
+VR had cancelled [18% of the trains on 26.10.2017](https://www.hsl.fi/en/traffic-bulletins/2017/commuter-trains-resume-normal-service-8pm-thursday-evening-normal-service) 
+
+
 
 ## Conclusions
 
-Making an accurate prediction when trains are late is challenging. Although our graphs show some correlation between weather data and trains being late, the classifiers results were not dependent on weather data. Instead, the classifiers results were based on train data purely, as some train types are more often late than others.
+Making an accurate prediction of train delays was challenging. Although our graphs show some correlation between weather data and trains being late, the classifiers results were not dependent on weather data. Instead, the classifiers results were based on train data purely, as some train types are typically more often late than others.
