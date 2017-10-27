@@ -1,4 +1,3 @@
-# Application for predicting train delays
 
 ## Table of Contents
 1. [Data overview](#data-overview)
