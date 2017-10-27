@@ -12,6 +12,8 @@ In this section we will give a brief overlook on the data to be analyzed. We use
 
 ### Weather data
 
+We mainly examined three weather variables, snow depth in cm, daily amount of rain in mm and daily average temperature. All the observations are from Helsinki.
+
 ![Pic 1: Amount of snowfall in the past year.](snow.png "Snow amount")
 
 ![Pic 2: Amount of rainfall in the past year.](rrday.png "Rain amount")
